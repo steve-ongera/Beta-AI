@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     "users",
     "chat",
     "media_ai",
-    "modules.mental_health",
+    "mental_health",
 ]
  
 SITE_ID = 1
