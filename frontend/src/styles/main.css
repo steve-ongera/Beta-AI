@@ -1,0 +1,472 @@
+/* ==========================================================================
+   File: frontend/src/styles/main.css
+   Role: Design tokens ("Quiet Harbor" palette/type) + app shell, sidenav,
+         chat, composer, and auth-page styles. Imported once in main.jsx.
+   ========================================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap");
+
+:root {
+  /* Color */
+  --ink: #1e2a26;          /* deep forest-slate — headers, primary text on paper */
+  --paper: #ecefea;        /* soft sage-white — app background */
+  --surface: #ffffff;      /* card / message surfaces */
+  --moss: #5c7a63;         /* primary accent — user bubbles, links, active states */
+  --moss-dim: #7d9884;     /* moss at lower emphasis */
+  --amber: #c98a4b;        /* secondary accent — CTAs, highlights, used sparingly */
+  --slate: #3a4440;        /* body text */
+  --slate-muted: #6b746f;  /* secondary text */
+  --mist: #d8ded9;         /* borders, dividers */
+  --mist-strong: #c2cac4;
+  --crisis: #b4483c;       /* muted brick — crisis/safety alerts, never bright red */
+  --crisis-bg: #f6e9e7;
+
+  /* Type */
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+
+  /* Layout */
+  --sidenav-width: 280px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --shadow-soft: 0 2px 10px rgba(30, 42, 38, 0.06);
+  --shadow-lifted: 0 8px 28px rgba(30, 42, 38, 0.12);
+
+  /* Motion */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --breath-duration: 4s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--paper);
+  color: var(--slate);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--moss);
+}
+
+:focus-visible {
+  outline: 2px solid var(--moss);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   App shell
+   ========================================================================== */
+
+.app-shell {
+  display: grid;
+  grid-template-columns: var(--sidenav-width) 1fr;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.sidenav {
+  background: var(--ink);
+  color: var(--paper);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px 14px;
+  overflow-y: auto;
+}
+
+.main-panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Off-canvas nav toggle — hidden on desktop, shown on small screens */
+.nav-toggle {
+  display: none;
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 40;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border: 1px solid var(--mist);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-soft);
+  font-size: 1.1rem;
+  color: var(--ink);
+}
+
+.nav-scrim {
+  display: none;
+}
+
+/* ==========================================================================
+   Typography — display face used with restraint, per design brief
+   ========================================================================== */
+
+.brand-mark {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.25rem;
+  letter-spacing: 0.01em;
+}
+
+.session-empty-state h1,
+.chat-date-divider {
+  font-family: var(--font-display);
+}
+
+.meta-mono {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  color: var(--slate-muted);
+}
+
+/* ==========================================================================
+   Signature element — the "breathing" presence dot
+   Slow 4s inhale/exhale rhythm next to the assistant when it's responding;
+   deliberately calm rather than a generic bouncing-dots spinner.
+   ========================================================================== */
+
+.breathing-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--moss);
+  display: inline-block;
+  animation: breathe var(--breath-duration) ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(0.85); opacity: 0.6; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+
+/* ==========================================================================
+   Guest banner
+   ========================================================================== */
+
+.guest-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 20px;
+  background: #fff6ea;
+  border-bottom: 1px solid #f0dfc0;
+  color: var(--ink);
+  font-size: 0.85rem;
+}
+
+.guest-banner .btn-link {
+  color: var(--amber);
+  font-weight: 600;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+/* ==========================================================================
+   Chat layout
+   ========================================================================== */
+
+.chat-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px 20px 12px;
+}
+
+.chat-column {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.message-row {
+  display: flex;
+  gap: 10px;
+  max-width: 80%;
+}
+
+.message-row.role-user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.message-bubble {
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  font-size: 0.94rem;
+}
+
+.role-assistant .message-bubble {
+  background: var(--surface);
+  border: 1px solid var(--mist);
+  color: var(--slate);
+  border-bottom-left-radius: 4px;
+}
+
+.role-user .message-bubble {
+  background: var(--moss);
+  color: #f4f7f4;
+  border-bottom-right-radius: 4px;
+}
+
+.message-bubble.risk-high {
+  background: var(--crisis-bg);
+  border: 1px solid #e3c2bd;
+  color: var(--ink);
+}
+
+.crisis-resources {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed #e3c2bd;
+  font-size: 0.85rem;
+}
+
+.session-empty-state {
+  margin: auto;
+  text-align: center;
+  max-width: 420px;
+  color: var(--slate-muted);
+}
+
+.session-empty-state h1 {
+  color: var(--ink);
+  font-size: 1.6rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+/* ==========================================================================
+   Composer / input bar
+   ========================================================================== */
+
+.composer {
+  border-top: 1px solid var(--mist);
+  background: var(--paper);
+  padding: 14px 20px 20px;
+}
+
+.composer-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--mist);
+  border-radius: var(--radius-lg);
+  padding: 8px 8px 8px 16px;
+  box-shadow: var(--shadow-soft);
+}
+
+.composer-inner textarea {
+  flex: 1;
+  border: none;
+  resize: none;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--slate);
+  background: transparent;
+  max-height: 160px;
+  padding: 8px 0;
+}
+
+.composer-inner textarea:focus {
+  outline: none;
+}
+
+.composer-icon-btn {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--slate-muted);
+  font-size: 1.05rem;
+  transition: background 0.15s var(--ease-standard), color 0.15s var(--ease-standard);
+}
+
+.composer-icon-btn:hover {
+  background: var(--mist);
+  color: var(--ink);
+}
+
+.composer-send-btn {
+  background: var(--moss);
+  color: #fff;
+}
+
+.composer-send-btn:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* ==========================================================================
+   Side navigation
+   ========================================================================== */
+
+.sidenav-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px 18px;
+}
+
+.new-chat-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(236, 239, 234, 0.18);
+  background: rgba(236, 239, 234, 0.06);
+  color: var(--paper);
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+  transition: background 0.15s var(--ease-standard);
+}
+
+.new-chat-btn:hover {
+  background: rgba(236, 239, 234, 0.14);
+}
+
+.history-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(236, 239, 234, 0.5);
+  padding: 4px 8px;
+  margin-top: 8px;
+}
+
+.history-item {
+  display: block;
+  padding: 9px 10px;
+  border-radius: var(--radius-sm);
+  color: rgba(236, 239, 234, 0.85);
+  font-size: 0.87rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: none;
+}
+
+.history-item:hover,
+.history-item.is-active {
+  background: rgba(236, 239, 234, 0.1);
+  color: var(--paper);
+}
+
+.sidefooter {
+  border-top: 1px solid rgba(236, 239, 234, 0.14);
+  padding-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: var(--paper);
+}
+
+.avatar-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--moss-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Responsive — sidenav becomes an off-canvas drawer below 860px
+   ========================================================================== */
+
+@media (max-width: 860px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+  }
+
+  .sidenav {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: min(84vw, 300px);
+    transform: translateX(-100%);
+    transition: transform 0.22s var(--ease-standard);
+    z-index: 50;
+  }
+
+  .sidenav.is-open {
+    transform: translateX(0);
+    box-shadow: var(--shadow-lifted);
+  }
+
+  .nav-open .nav-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 42, 38, 0.35);
+    z-index: 45;
+  }
+
+  .main-panel {
+    padding-top: 56px;
+  }
+
+  .message-row {
+    max-width: 92%;
+  }
+}
