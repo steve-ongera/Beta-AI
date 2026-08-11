@@ -1,6 +1,12 @@
+# ============================================================================
+# App:  mentalhealth
+# File: serializers.py
+# Role: Request/response shapes for sessions, messages, and crisis logs.
+# ============================================================================
+
 from rest_framework import serializers
 
-from ..chat.models import ChatSession, CrisisEscalation, Message
+from .models import ChatSession, CrisisEscalation, Message
 
 
 class MessageSerializer(serializers.ModelSerializer):

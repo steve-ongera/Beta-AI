@@ -1,3 +1,9 @@
+# ============================================================================
+# App:  mentalhealth
+# File: urls.py
+# Mounted at: /api/modules/mental-health/ (see config/urls.py)
+# ============================================================================
+
 from django.urls import path
 
 from .views import ChatSessionDetailView, ChatSessionListView, SendMessageView

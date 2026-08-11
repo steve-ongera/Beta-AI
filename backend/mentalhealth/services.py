@@ -1,14 +1,17 @@
-"""
-Business logic for the mental health module, kept out of views.py so it stays
-testable and reusable (e.g. from Celery tasks or an admin action).
-"""
+# ============================================================================
+# App:  mentalhealth
+# File: services.py
+# Role: Business logic — session handling, risk screening, AI engine calls,
+#       crisis escalation. Kept out of views.py so it's testable/reusable
+#       from Celery tasks or the admin.
+# ============================================================================
 
 import logging
 
 import requests
 from django.conf import settings
 
-from ..chat.models import ChatSession, CrisisEscalation, Message
+from .models import ChatSession, CrisisEscalation, Message
 
 logger = logging.getLogger(__name__)
 

@@ -1,3 +1,9 @@
+# ============================================================================
+# App:  mentalhealth
+# File: views.py
+# Role: HTTP layer — session list/detail, send-message (guest + auth paths).
+# ============================================================================
+
 from rest_framework import permissions, status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import ListAPIView, RetrieveDestroyAPIView
@@ -5,9 +11,9 @@ from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
-from ..mentalhealth import services
+from . import services
 from .models import ChatSession
-from ..mentalhealth.serializers import (
+from .serializers import (
     ChatSessionDetailSerializer,
     ChatSessionListSerializer,
     CrisisEscalationSerializer,
