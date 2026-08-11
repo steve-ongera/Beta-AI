@@ -1,7 +1,9 @@
-"""
-Main URL configuration. Each domain (auth, chat, media, modules) is namespaced
-so future modules register the same way the mental_health module does.
-"""
+# ============================================================================
+# App:  config (project-level, not one of the 4 local apps)
+# File: urls.py  (root URLConf)
+# Role: Each domain (auth, chat, media, modules) is namespaced so future
+#       modules register the same way the mentalhealth module does.
+# ============================================================================
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -11,20 +13,22 @@ from django.urls import include, path
 urlpatterns = [
     path("admin/", admin.site.urls),
 
-    # Auth: username/password + Google OAuth (dj-rest-auth + allauth)
+    # --- users app: auth (username/password + Google OAuth) ---------------
     path("api/auth/", include("dj_rest_auth.urls")),
     path("api/auth/registration/", include("dj_rest_auth.registration.urls")),
-    path("api/auth/", include("users.urls")),  # custom endpoints (google exchange, refresh helpers)
+    path("api/auth/", include("users.urls")),  # custom endpoints (google exchange, /me)
 
-    # Core platform
-    path("api/chat/", include("chat.urls")),
+    # --- chat app: module registry + cross-module history -----------------
+    path("api/modules/", include("chat.urls")),
+
+    # --- media_ai app: image upload + image generation ---------------------
     path("api/media/", include("media_ai.urls")),
 
-    # Pluggable AI app modules — each module owns its own urls.py
-    path("api/modules/mental-health/", include("modules.mental_health.urls")),
+    # --- mentalhealth app: first pluggable AI app module -------------------
+    path("api/modules/mental-health/", include("mentalhealth.urls")),
 
-    # Future modules register here, e.g.:
-    # path("api/modules/nutrition/", include("modules.nutrition.urls")),
+    # Future modules register the same way, e.g.:
+    # path("api/modules/nutrition/", include("nutrition.urls")),
 ]
 
 if settings.DEBUG:
