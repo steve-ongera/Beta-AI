@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import ChatSession, CrisisEscalation, Message
+from ..chat.models import ChatSession, CrisisEscalation, Message
 
 
 class MessageSerializer(serializers.ModelSerializer):

@@ -8,7 +8,7 @@ import logging
 import requests
 from django.conf import settings
 
-from .models import ChatSession, CrisisEscalation, Message
+from ..chat.models import ChatSession, CrisisEscalation, Message
 
 logger = logging.getLogger(__name__)
 
