@@ -10,9 +10,12 @@ import { Route, Routes } from "react-router-dom";
 import SideNav from "./components/SideNav.jsx";
 import SideFooter from "./components/SideFooter.jsx";
 import GuestBanner from "./components/GuestBanner.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import ChatPage from "./pages/ChatPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
+import SettingsPage from "./pages/SettingsPage.jsx";
+import NotFoundPage from "./pages/NotFoundPage.jsx";
 import { useAuth } from "./hooks/useAuth.js";
 
 export default function App() {
@@ -48,6 +51,15 @@ export default function App() {
           <Route path="/c/:sessionId" element={<ChatPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
     </div>
