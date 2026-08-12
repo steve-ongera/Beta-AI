@@ -7,6 +7,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useChatHistory } from "../hooks/useChat.js";
+import ModuleSwitcher from "./ModuleSwitcher.jsx";
 
 export default function SideNav({ isAuthenticated, onNavigate }) {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ export default function SideNav({ isAuthenticated, onNavigate }) {
   return (
     <div>
       <div className="sidenav-header">
-        <span className="brand-mark">MindBridge</span>
+        <ModuleSwitcher />
       </div>
 
       <button type="button" className="new-chat-btn" onClick={handleNewChat}>
