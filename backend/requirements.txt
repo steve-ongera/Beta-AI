@@ -1,0 +1,18 @@
+# ============================================================================
+# File: backend/requirements.txt
+# ============================================================================
+
+Django>=5.0,<5.2
+djangorestframework>=3.15
+djangorestframework-simplejwt>=5.3
+django-cors-headers>=4.4
+django-filter>=24.2
+django-allauth>=64.0
+dj-rest-auth>=6.0
+psycopg2-binary>=2.9
+Pillow>=10.4
+requests>=2.32
+python-dotenv>=1.0
+celery>=5.4
+redis>=5.0
+google-auth>=2.32

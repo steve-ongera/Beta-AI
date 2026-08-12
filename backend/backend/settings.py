@@ -28,7 +28,9 @@ INSTALLED_APPS = [
  
     # Third-party
     "rest_framework",
+    "rest_framework.authtoken",   # <-- add this line
     "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "django_filters",
     "allauth",
@@ -38,12 +40,15 @@ INSTALLED_APPS = [
     "dj_rest_auth",
     "dj_rest_auth.registration",
  
-    # Local apps
-    "users",
-    "chat",
-    "media_ai",
-    "mentalhealth",
+    # Local apps (4)
+    "users",         # auth: username/password + Google OAuth, user profile
+    "chat",          # module registry + cross-module chat history aggregation
+    "media_ai",      # image upload analysis + image generation
+    "mentalhealth",  # first AI app module: mental health chat
 ]
+ 
+
+ 
  
 SITE_ID = 1
  
