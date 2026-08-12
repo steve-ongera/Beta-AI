@@ -6,7 +6,7 @@
 // ============================================================================
 
 import React, { useState } from "react";
-import { useAuth } from "../hooks/useAuth.js";
+import { useAuth } from "../hooks/useAuth.jsx";
 import { authApi } from "../services/api.js";
 
 export default function SettingsPage() {

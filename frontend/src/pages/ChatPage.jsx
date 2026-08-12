@@ -7,7 +7,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useChat } from "../hooks/useChat.js";
-import { useAuth } from "../hooks/useAuth.js";
+import { useAuth } from "../hooks/useAuth.jsx";
 import ImageGeneratorModal from "../components/ImageGeneratorModal.jsx";
 
 const CRISIS_STATIC_RESOURCES = [

@@ -10,7 +10,7 @@
 // ============================================================================
 
 import React, { useEffect, useRef } from "react";
-import { useAuth } from "../hooks/useAuth.js";
+import { useAuth } from "../hooks/useAuth.jsx";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const GIS_SCRIPT_SRC = "https://accounts.google.com/gsi/client";

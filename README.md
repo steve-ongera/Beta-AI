@@ -18,7 +18,7 @@ This must be built into the product from day one, not added later.
 
 ## 1. Vision
 
-MindBridge AI is designed like a **platform**, not a single app:
+Beta AI AI is designed like a **platform**, not a single app:
 
 - **Today**: One flagship module — a mental health assistant trained on doctor-reviewed data, with chat, image upload, and image generation.
 - **Tomorrow**: A general framework where new "API modules" (legal, nutrition, education, etc.) can be plugged in without rearchitecting the core.
@@ -100,7 +100,7 @@ The Django API Gateway is deliberately kept "thin" — auth, user/chat data, rou
 ## 5. Project Structure
 
 ```
-mindbridge-ai/
+Beta AI-ai/
 ├── backend/
 │   ├── config/                # Django project settings (settings, urls, wsgi/asgi)
 │   ├── users/                 # Auth: username/password + Google OAuth, profiles

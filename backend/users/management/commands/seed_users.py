@@ -19,7 +19,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         admin, created = User.objects.get_or_create(
             username="admin",
-            defaults={"email": "admin@mindbridge.local", "is_staff": True, "is_superuser": True},
+            defaults={"email": "admin@Beta AI.local", "is_staff": True, "is_superuser": True},
         )
         if created:
             admin.set_password("admin12345")
@@ -30,7 +30,7 @@ class Command(BaseCommand):
 
         demo_user, created = User.objects.get_or_create(
             username="demo_user",
-            defaults={"email": "demo@mindbridge.local", "is_email_verified": True},
+            defaults={"email": "demo@Beta AI.local", "is_email_verified": True},
         )
         if created:
             demo_user.set_password("demopass123")

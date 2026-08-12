@@ -1,6 +1,6 @@
 
 """
-Django settings for MindBridge AI platform.
+Django settings for Beta AI AI platform.
 Split-ready: everything env-driven so this can later become base/dev/prod settings.
 """
  

@@ -16,7 +16,7 @@ import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 import SettingsPage from "./pages/SettingsPage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
-import { useAuth } from "./hooks/useAuth.js";
+import { useAuth } from "./hooks/useAuth.jsx";
 
 export default function App() {
   const { user, isAuthenticated } = useAuth();

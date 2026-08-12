@@ -6,7 +6,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { mentalHealthApi } from "../services/api.js";
-import { useAuth } from "./useAuth.js";
+import { useAuth } from "./useAuth.jsx";
 
 export function useChatHistory() {
   const { isAuthenticated } = useAuth();

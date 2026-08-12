@@ -14,7 +14,7 @@ export default function ModuleSwitcher() {
 
   if (isLoading || modules.length <= 1) {
     // Nothing to switch between yet — stay out of the way.
-    return <span className="brand-mark">MindBridge</span>;
+    return <span className="brand-mark">Beta AI</span>;
   }
 
   return (
@@ -25,7 +25,7 @@ export default function ModuleSwitcher() {
         style={{ background: "none", border: "none", color: "inherit", display: "flex", alignItems: "center", gap: 6 }}
         onClick={() => setIsOpen((open) => !open)}
       >
-        MindBridge
+        Beta AI
         <i className="bi bi-chevron-down" style={{ fontSize: "0.7rem" }} aria-hidden="true" />
       </button>
 

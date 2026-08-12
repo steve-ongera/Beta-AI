@@ -6,7 +6,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth.js";
+import { useAuth } from "../hooks/useAuth.jsx";
 
 export default function SideFooter({ user, isAuthenticated }) {
   const { logout } = useAuth();
