@@ -7,6 +7,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useChat } from "../hooks/useChat.js";
+import { useAuth } from "../hooks/useAuth.js";
+import ImageGeneratorModal from "../components/ImageGeneratorModal.jsx";
 
 const CRISIS_STATIC_RESOURCES = [
   { name: "988 Suicide & Crisis Lifeline (US)", contact: "Call or text 988" },
@@ -14,9 +16,11 @@ const CRISIS_STATIC_RESOURCES = [
 
 export default function ChatPage() {
   const { sessionId } = useParams();
+  const { isAuthenticated } = useAuth();
   const { messages, isSending, crisisAlert, error, sendMessage } = useChat(sessionId);
   const [draft, setDraft] = useState("");
   const [pendingImage, setPendingImage] = useState(null);
+  const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
   const scrollRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -103,6 +107,17 @@ export default function ChatPage() {
             onChange={(e) => setPendingImage(e.target.files?.[0] || null)}
           />
 
+          {isAuthenticated && (
+            <button
+              type="button"
+              className="composer-icon-btn"
+              aria-label="Generate an image"
+              onClick={() => setIsGeneratorOpen(true)}
+            >
+              <i className="bi bi-stars" aria-hidden="true" />
+            </button>
+          )}
+
           <textarea
             rows={1}
             placeholder="Share what's on your mind…"
@@ -126,6 +141,8 @@ export default function ChatPage() {
           </div>
         )}
       </form>
+
+      {isGeneratorOpen && <ImageGeneratorModal onClose={() => setIsGeneratorOpen(false)} />}
     </>
   );
 }
