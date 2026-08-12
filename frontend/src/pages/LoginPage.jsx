@@ -7,6 +7,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.js";
+import GoogleLoginButton from "../components/GoogleLoginButton.jsx";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -64,10 +65,9 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <button type="button" style={googleButtonStyle} onClick={() => alert("Wire up Google OAuth client here")}>
-          <i className="bi bi-google" aria-hidden="true" style={{ marginRight: 8 }} />
-          Continue with Google
-        </button>
+        <div style={{ marginTop: 10 }}>
+          <GoogleLoginButton />
+        </div>
 
         <p className="meta-mono" style={{ marginTop: 16 }}>
           New here? <Link to="/register">Create an account</Link>
@@ -90,14 +90,4 @@ const buttonStyle = {
   borderRadius: "var(--radius-sm)",
   border: "none",
   fontWeight: 600,
-};
-
-const googleButtonStyle = {
-  marginTop: 10,
-  padding: "10px 14px",
-  borderRadius: "var(--radius-sm)",
-  border: "1px solid var(--mist)",
-  background: "var(--surface)",
-  width: "100%",
-  fontWeight: 500,
 };
