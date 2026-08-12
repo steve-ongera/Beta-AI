@@ -10,15 +10,27 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from . import services
-from .serializers import GoogleExchangeSerializer, UserSerializer
+from .serializers import GoogleExchangeSerializer, UserPreferencesSerializer, UserSerializer
+from .models import UserPreferences
 
 
 class MeView(APIView):
-    """GET /api/auth/user/ — current user's profile."""
+    """
+    GET  /api/auth/user/ — current user's profile.
+    PATCH /api/auth/user/ — update preferences (theme, default_module,
+                             marketing_opt_in). Powers SettingsPage.jsx.
+    """
 
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
+        return Response(UserSerializer(request.user).data)
+
+    def patch(self, request):
+        prefs, _ = UserPreferences.objects.get_or_create(user=request.user)
+        serializer = UserPreferencesSerializer(prefs, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response(UserSerializer(request.user).data)
 
 
