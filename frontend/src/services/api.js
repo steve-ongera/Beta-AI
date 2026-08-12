@@ -72,6 +72,7 @@ export const authApi = {
   loginWithGoogle: (idToken) =>
     client.post("/auth/google/", { access_token: idToken }).then((r) => r.data),
   me: () => client.get("/auth/user/").then((r) => r.data),
+  updatePreferences: (payload) => client.patch("/auth/user/", payload).then((r) => r.data),
 };
 
 // ---------------------------------------------------------------------------
