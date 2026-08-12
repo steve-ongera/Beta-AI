@@ -37,7 +37,17 @@ export default function LoginPage() {
 
   return (
     <div className="chat-scroll">
-      <div className="chat-column" style={{ maxWidth: 380, paddingTop: 40 }}>
+      <div className="chat-column" style={{ maxWidth: 480, paddingTop: 40 }}>
+        <div style={{ textAlign: "center", marginBottom: 5 }}>
+          <img
+            src="/beta_ai.png"
+            alt="Beta AI"
+            style={{ width: 80, height: 80, objectFit: "contain", margin: "0 auto 10px", display: "block" }}
+          />
+          <div className="meta-mono" style={{ color: "var(--slate-muted)" }}>
+            Your AI companion for mental wellness
+          </div>
+        </div>
         <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 500 }}>Welcome back</h1>
 
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
