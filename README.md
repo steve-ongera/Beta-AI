@@ -1,29 +1,25 @@
 # Beta AI — AI App Platform
 
-> An OpenAI-Platform-style interface for building and running AI applications — not a coding tool, but a platform for AI-powered *apps*. Launching with a Mental Health module: direct, doctor-trained conversational support, built for scale into future domains.
+> An OpenAI-Platform-style interface for building and running AI applications — not a coding tool, but a platform for AI-powered *apps*. Launching with a Mental Health module: direct, doctor-reviewed conversational support, built for scale into future domains.
 
 ---
 
-##  Important Disclaimer
+## Important Disclaimer
 
-This platform is **not a replacement for professional medical or psychiatric care**. Any mental-health module built on this platform must:
-- Clearly state it is not a licensed therapist/doctor and cannot diagnose or prescribe.
-- Provide crisis resources (suicide/self-harm hotlines) prominently and always-visible.
-- Be reviewed by licensed mental health professionals before any public/beta release.
-- Log and escalate (to a human or crisis resource) any conversation indicating risk of self-harm or harm to others.
-
-This must be built into the product from day one, not added later.
+This platform is **not a replacement for professional medical or psychiatric care**. The mental-health module:
+- Clearly states it is not a licensed therapist/doctor and cannot diagnose or prescribe.
+- Shows crisis resources (suicide/self-harm hotlines) whenever a message is flagged high-risk.
+- Logs every high-risk message as a `CrisisEscalation` record for human review.
+- Should be reviewed by licensed mental health professionals before any public/beta release.
 
 ---
 
 ## 1. Vision
 
-Beta AI AI is designed like a **platform**, not a single app:
+Beta AI is designed like a **platform**, not a single app:
 
-- **Today**: One flagship module — a mental health assistant trained on doctor-reviewed data, with chat, image upload, and image generation.
-- **Tomorrow**: A general framework where new "API modules" (legal, nutrition, education, etc.) can be plugged in without rearchitecting the core.
-
-The core product experience mirrors the familiar OpenAI Platform / ChatGPT-style UI: a central chat interface, a collapsible side navigation with chat history, and a clean, minimal, professional aesthetic — but purpose-built around structured "AI App" modules instead of raw code/dev tooling.
+- **Today**: One flagship module — a mental health assistant, with chat, image upload, and image generation.
+- **Tomorrow**: A general framework where new "API modules" (nutrition, legal, education, etc.) register themselves via the `chat` app's module registry, with no core rearchitecting.
 
 ---
 
@@ -31,208 +27,206 @@ The core product experience mirrors the familiar OpenAI Platform / ChatGPT-style
 
 | Feature | Guest User | Logged-in User |
 |---|---|---|
-| Chat with AI |  (limited / generic responses) |  (full, personalized, accurate) |
-| Chat history | x |  (saved per user, shown in sidenav) |
-| Image upload → AI response |  (limited) |  (full) |
-| Image generation | x or limited | v |
+| Chat with AI | limited / generic responses | full, personalized responses |
+| Chat history | not saved | saved per user, shown in sidenav |
+| Image upload → AI response | limited | full |
+| Image generation | not available | available |
 | Login | — | Username/Password + Google OAuth |
-| Multi-module support | Scaffolded for future modules | Scaffolded for future modules |
+| Multi-module support | scaffolded for future modules | scaffolded for future modules |
 
 ---
 
 ## 3. Tech Stack
 
-**Backend**
-- Django + Django REST Framework (API layer)
-- PostgreSQL (primary database)
-- Django Channels / WebSockets (optional, for streaming chat responses)
-- Celery + Redis (async tasks: image generation, model inference queueing)
-- `django-allauth` or `social-auth-app-django` (Google OAuth)
-- JWT (SimpleJWT) for session/API auth
+**Backend** — Django + Django REST Framework, SQLite (dev), JWT auth (SimpleJWT + dj-rest-auth), `django-allauth` for Google OAuth, Celery + Redis (async tasks, not yet wired to a task).
 
-**Frontend**
-- React (JSX, not TSX for V1) via Vite
-- Bootstrap Icons for iconography
-- Custom CSS / Bootstrap grid for layout
-- React Router for navigation
-- Context API or Redux (chat state, auth state)
+**Frontend** — React (JSX) via Vite, React Router, Bootstrap Icons (CDN), custom CSS design system ("Quiet Harbor").
 
-**AI / ML**
-- Custom-trained model/engine (domain-specific — mental health corpus, doctor-reviewed)
-- Model serving via a dedicated inference service (FastAPI/Django microservice) — decoupled from the main backend so it can scale/swap independently
-- Image generation via a separate pluggable image-gen service
-
-**Infra (future-facing)**
-- Dockerized services (web, api, inference, worker, redis, db)
-- Designed so each "module" (mental health today, others later) can be deployed as its own service behind a shared gateway
+**AI Engine** — A separate local FastAPI service (`ai-engine/`), no third-party AI API calls. Currently rule-based (pattern matching + keyword knowledge base); see `ai-engine/TRAINING_GUIDE.md` for the path to retrieval (RAG) and a real fine-tuned local model.
 
 ---
 
-## 4. High-Level Architecture
+## 4. Project Structure (as actually built)
 
 ```
-                        ┌─────────────────────┐
-                        │   React Frontend     │
-                        │  (Vite + JSX + BS)    │
-                        └──────────┬───────────┘
-                                   │ REST / WS
-                        ┌──────────▼───────────┐
-                        │   Django API Gateway  │
-                        │ (auth, routing, users)│
-                        └──────────┬───────────┘
-                     ┌─────────────┼──────────────┐
-                     │             │              │
-           ┌─────────▼───┐ ┌───────▼──────┐ ┌─────▼──────┐
-           │ Mental Health│ │ Image Gen /  │ │ Future      │
-           │ Module (API) │ │ Vision Module│ │ Modules...  │
-           └─────────┬────┘ └───────┬──────┘ └─────────────┘
-                     │              │
-           ┌─────────▼──────────────▼─────┐
-           │   Custom AI Engine / Models    │
-           │ (trained, doctor-reviewed data)│
-           └────────────────────────────────┘
-```
-
-The Django API Gateway is deliberately kept "thin" — auth, user/chat data, routing — so new modules register as pluggable Django apps + their own model-serving service, without touching core logic.
-
----
-
-## 5. Project Structure
-
-```
-Beta AI-ai/
+Beta-AI/
 ├── backend/
-│   ├── config/                # Django project settings (settings, urls, wsgi/asgi)
-│   ├── users/                 # Auth: username/password + Google OAuth, profiles
-│   ├── chat/                  # Chat sessions, messages, history
-│   ├── modules/
-│   │   └── mental_health/     # First API module app
-│   ├── media_ai/              # Image upload handling + image generation requests
-│   ├── core/                  # Shared utilities, permissions, base models
+│   ├── config/                 # settings.py, urls.py, wsgi.py, asgi.py
+│   │                            # NOTE: your ROOT_URLCONF may say "backend.urls"
+│   │                            # if you renamed the project package — keep
+│   │                            # settings.py's INSTALLED_APPS/urls.py in sync
+│   │                            # with whatever you named this folder.
+│   ├── users/                  # auth: username/password + Google OAuth, profile
+│   ├── chat/                   # AI-module registry (GET /api/modules/)
+│   ├── media_ai/               # image upload analysis + image generation
+│   ├── mentalhealth/           # first AI app module (flat app, not nested)
+│   │   └── management/commands/seed_mentalhealth.py
+│   ├── users/management/commands/seed_users.py
+│   ├── chat/management/commands/{seed_modules.py, seed_all.py}
+│   ├── media_ai/management/commands/seed_media.py
+│   ├── requirements.txt
+│   ├── .env.example
 │   └── manage.py
 │
 ├── frontend/
-│   ├── public/
-│   │   └── index.html         # SEO meta tags, Bootstrap Icons CDN
+│   ├── index.html
+│   ├── .env.example
 │   ├── src/
-│   │   ├── main.jsx
-│   │   ├── App.jsx
-│   │   ├── services/
-│   │   │   └── api.js         # Centralized API endpoint definitions
-│   │   ├── hooks/
-│   │   │   ├── useAuth.js
-│   │   │   ├── useChat.js
-│   │   │   └── useChatHistory.js
-│   │   ├── components/
-│   │   │   ├── SideNav.jsx
-│   │   │   ├── SideNavToggle.jsx
-│   │   │   ├── SideFooter.jsx
-│   │   │   ├── ChatWindow.jsx
-│   │   │   ├── ChatInput.jsx
-│   │   │   ├── ChatHistoryList.jsx
-│   │   │   ├── ImageUpload.jsx
-│   │   │   ├── LoginModal.jsx
-│   │   │   └── GuestBanner.jsx
-│   │   ├── pages/
-│   │   │   ├── ChatPage.jsx
-│   │   │   ├── LoginPage.jsx
-│   │   │   └── RegisterPage.jsx
-│   │   └── styles/
+│   │   ├── main.jsx / App.jsx
+│   │   ├── services/api.js     # every backend endpoint, JWT refresh handling
+│   │   ├── hooks/               # useAuth, useChat, useModules
+│   │   ├── components/          # SideNav, SideFooter, GuestBanner,
+│   │   │                        # ModuleSwitcher, GoogleLoginButton,
+│   │   │                        # ImageGeneratorModal, ProtectedRoute,
+│   │   │                        # PasswordField
+│   │   ├── pages/               # ChatPage, LoginPage, RegisterPage,
+│   │   │                        # SettingsPage, NotFoundPage
+│   │   └── styles/main.css
 │   └── vite.config.js
 │
-├── ai-engine/                 # Model training / inference service (decoupled)
-│   ├── training/
-│   ├── inference_api/
-│   └── requirements.txt
-│
-├── docker-compose.yml
-├── .env.example
-└── README.md
+└── ai-engine/                   # local inference service — no external AI APIs
+    ├── main.py                  # FastAPI app, POST /v1/infer
+    ├── responder.py             # the actual response logic (Stage 0: rules)
+    ├── requirements.txt
+    ├── README.md
+    └── TRAINING_GUIDE.md        # Stage 0 → RAG → fine-tuned model roadmap
 ```
 
 ---
 
-## 6. API Overview (V1 endpoints)
+## 5. API Overview (as actually built)
 
 ```
-Auth
-POST   /api/auth/register/
-POST   /api/auth/login/
-POST   /api/auth/google/
-POST   /api/auth/refresh/
+Auth (users app + dj-rest-auth)
+POST   /api/auth/registration/          register
+POST   /api/auth/login/                 username/password login → JWT
 POST   /api/auth/logout/
+POST   /api/auth/google/                exchange Google ID token → JWT
+GET    /api/auth/user/                  current user profile
+PATCH  /api/auth/user/                  update preferences (theme, etc.)
+POST   /api/auth/token/refresh/         refresh access token
 
-Chat
-GET    /api/chat/sessions/            # list chat history (auth only)
-POST   /api/chat/sessions/            # create new session
-GET    /api/chat/sessions/:id/
-POST   /api/chat/sessions/:id/message/
-DELETE /api/chat/sessions/:id/
+Module registry (chat app)
+GET    /api/modules/                    list active AI-app modules
 
-Media / AI
-POST   /api/media/upload/             # upload image, get AI response
-POST   /api/media/generate/           # generate image (auth only)
+Mental health module (mentalhealth app)
+GET    /api/modules/mental-health/sessions/         chat history (auth only)
+GET    /api/modules/mental-health/sessions/<id>/
+DELETE /api/modules/mental-health/sessions/<id>/
+POST   /api/modules/mental-health/message/          send a message (guest or auth)
 
-Modules
-GET    /api/modules/                  # list available AI app modules
-POST   /api/modules/mental-health/message/
+Media (media_ai app)
+POST   /api/media/upload/               image → AI analysis
+POST   /api/media/generate/             prompt → generated image (auth only)
 ```
 
-`frontend/src/services/api.js` will centralize all of the above as a single exported client so components/hooks never hardcode URLs.
+---
+
+## 6. How to Run the Server (all 3 services)
+
+You need **three terminals** running at once: the AI engine, the Django
+backend, and the React frontend. Start them in this order.
+
+### 6.1 First-time setup
+
+```bash
+# --- AI engine ---
+cd ai-engine
+python -m venv venv && venv\Scripts\activate        # Windows
+# source venv/bin/activate                           # macOS/Linux
+pip install -r requirements.txt
+
+# --- Backend ---
+cd ../backend
+python -m venv venv && venv\Scripts\activate
+pip install -r requirements.txt
+copy .env.example .env                               # Windows: copy, macOS/Linux: cp
+# edit .env — at minimum leave defaults as-is for local dev
+
+python manage.py makemigrations
+python manage.py migrate
+python manage.py seed_all                             # creates demo users + demo data
+# admin / admin12345, demo_user / demopass123
+
+# --- Frontend ---
+cd ../frontend
+npm install
+copy .env.example .env
+```
+
+### 6.2 Every time you develop
+
+**Terminal 1 — AI engine (start first):**
+```bash
+cd ai-engine
+venv\Scripts\activate
+uvicorn main:app --port 9000 --reload
+```
+Verify it's up: `http://localhost:9000/healthz` should return `{"status": "ok"}`.
+
+**Terminal 2 — Backend:**
+```bash
+cd backend
+venv\Scripts\activate
+python manage.py runserver
+```
+Runs at `http://localhost:8000`. Admin panel: `http://localhost:8000/admin/`
+(log in with the `admin` user seed_all created).
+
+**Terminal 3 — Frontend:**
+```bash
+cd frontend
+npm run dev
+```
+Runs at `http://localhost:5173` — open this in your browser.
+
+### 6.3 Sanity check
+
+1. Open `http://localhost:5173`, log in as `demo_user` / `demopass123`.
+2. Send the message `hi` in chat.
+3. You should get back a personalized greeting from the AI engine
+   (`"Hi demo_user! I'm here and ready to listen..."`) — if you instead see
+   *"I'm having trouble reaching the assistant right now"*, the AI engine
+   (Terminal 1) isn't running or isn't reachable at `AI_ENGINE_URL`.
 
 ---
 
 ## 7. Guest vs. Authenticated Behavior
 
-- **Guests** can chat and upload images, but responses are served from a lighter/generic model path and are explicitly labeled as "general guidance — log in for personalized responses."
-- **Authenticated users** get: full model access, saved chat history in the sidenav, image generation, and personalized context carried across sessions.
-- No guest chat data is persisted as chat history — only ephemeral session state.
+- **Guests** can chat and upload images; responses use a lighter/generic
+  profile and are labeled "general guidance — log in for personalized responses."
+- **Authenticated users** get full model access, saved chat history, image
+  generation, and personalized responses (their name is passed to the AI
+  engine — see `ai-engine/responder.py`).
+- Guest sessions are never shown in the saved chat-history sidenav.
 
 ---
 
 ## 8. Scalability Plan
 
-1. **V1**: Single Django monolith + one module (mental health) + one inference service.
-2. **V2**: Extract each module into its own Django app with isolated routes/models; shared auth/chat core stays central.
-3. **V3**: Move to separate deployable services per module (microservices) behind an API gateway; inference services scale independently (GPU-backed) from the web tier.
-4. Chat history, user data, and media stored in a way that's module-agnostic from day one (generic `Session` / `Message` models with a `module` foreign key), so adding a new module never requires a schema rewrite.
+1. **V1** (current): Django monolith with 4 apps + one decoupled AI engine.
+2. **V2**: New modules register in the `chat` app's `AIModule` registry
+   (see `chat/management/commands/seed_modules.py` for the pattern) — no
+   core changes needed to add one.
+3. **V3**: Each module + its inference needs becomes independently
+   deployable/scalable behind a shared gateway.
 
 ---
 
-## 9. Setup (planned)
+## 9. Roadmap
 
-```bash
-# Backend
-cd backend
-python -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py runserver
-
-# Frontend
-cd frontend
-npm install
-npm run dev
-
-# Full stack (later)
-docker-compose up --build
-```
-
-Environment variables (`.env`): `SECRET_KEY`, `DATABASE_URL`, `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET`, `AI_ENGINE_URL`, `REDIS_URL`.
+- [x] Auth (username/password + Google OAuth), JWT
+- [x] Mental health module: chat, sessions, crisis-flagging + escalation log
+- [x] Image upload + image generation endpoints
+- [x] Local AI engine (Stage 0: rule-based, no external API)
+- [ ] AI engine Stage 1: RAG over doctor-reviewed content
+- [ ] AI engine Stage 2: fine-tuned local model
+- [ ] Clinical review process for the mental-health module before any public release
+- [ ] Additional modules (nutrition, general wellness)
 
 ---
 
-## 10. Roadmap
+## 10. Contributing
 
-- [ ] V1: Auth (username/password + Google OAuth), chat UI, mental health module, chat history, image upload
-- [ ] V1.1: Image generation
-- [ ] V1.2: Crisis-detection safety layer + human escalation path
-- [ ] V2: Module plugin architecture formalized
-- [ ] V2.1: Additional health-adjacent modules (nutrition, general wellness)
-- [ ] V3: Multi-tenant / module marketplace
-
----
-
-## 11. Contributing
-
-This is currently a solo/early-stage build. Structure above is intended to keep the codebase clean enough to onboard contributors once the core mental-health module is stable and clinically reviewed.
+Solo/early-stage build. Keep the codebase clean enough to onboard
+contributors once the mental-health module is clinically reviewed.
