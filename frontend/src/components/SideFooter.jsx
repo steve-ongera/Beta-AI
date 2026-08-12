@@ -32,6 +32,9 @@ export default function SideFooter({ user, isAuthenticated }) {
           {user?.username || user?.email}
         </div>
       </div>
+      <Link to="/settings" aria-label="Settings" className="composer-icon-btn" style={{ color: "inherit" }}>
+        <i className="bi bi-gear" aria-hidden="true" />
+      </Link>
       <button
         type="button"
         onClick={logout}
