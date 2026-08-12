@@ -8,6 +8,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.jsx";
 import GoogleLoginButton from "../components/GoogleLoginButton.jsx";
+import PasswordField from "../components/PasswordField.jsx";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -48,14 +49,11 @@ export default function LoginPage() {
             required
             style={inputStyle}
           />
-          <input
+          <PasswordField
             name="password"
-            type="password"
             placeholder="Password"
             value={form.password}
             onChange={handleChange}
-            required
-            style={inputStyle}
           />
 
           {error && <div className="meta-mono" style={{ color: "var(--crisis)" }}>{error}</div>}

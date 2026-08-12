@@ -7,6 +7,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.jsx";
+import PasswordField from "../components/PasswordField.jsx";
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -47,8 +48,8 @@ export default function RegisterPage() {
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <input name="username" placeholder="Username" value={form.username} onChange={handleChange} required style={inputStyle} />
           <input name="email" type="email" placeholder="Email" value={form.email} onChange={handleChange} required style={inputStyle} />
-          <input name="password1" type="password" placeholder="Password" value={form.password1} onChange={handleChange} required style={inputStyle} />
-          <input name="password2" type="password" placeholder="Confirm password" value={form.password2} onChange={handleChange} required style={inputStyle} />
+          <PasswordField name="password1" placeholder="Password" value={form.password1} onChange={handleChange} />
+          <PasswordField name="password2" placeholder="Confirm password" value={form.password2} onChange={handleChange} />
 
           {error && <div className="meta-mono" style={{ color: "var(--crisis)" }}>{error}</div>}
 

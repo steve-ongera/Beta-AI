@@ -16,3 +16,25 @@ python-dotenv>=1.0
 celery>=5.4
 redis>=5.0
 google-auth>=2.32
+
+# ============================================================================
+# File: ai-engine/requirements.txt
+# Stage 0 (rule-based, this file): just FastAPI + uvicorn.
+# Stage 2 (real training, see TRAINING_GUIDE.md) adds: torch, transformers,
+# peft, trl, datasets, sentence-transformers, pgvector/chromadb — not needed
+# until you get there, so they're commented out below rather than installed
+# up front.
+# ============================================================================
+
+fastapi>=0.115
+uvicorn[standard]>=0.32
+pydantic>=2.9
+
+# --- Stage 2: fine-tuning + RAG (uncomment when you start training) ---
+# torch>=2.4
+# transformers>=4.45
+# peft>=0.13
+# trl>=0.11
+# datasets>=3.0
+# sentence-transformers>=3.1
+# chromadb>=0.5

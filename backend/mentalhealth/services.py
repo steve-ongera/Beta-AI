@@ -80,7 +80,7 @@ def record_crisis_escalation(message: Message, session: ChatSession, reason: str
     return escalation
 
 
-def call_ai_engine(*, prompt: str, image_path: str | None, is_authenticated: bool) -> dict:
+def call_ai_engine(*, prompt: str, image_path: str | None, is_authenticated: bool, display_name: str | None = None) -> dict:
     """
     Calls the decoupled inference service (ai-engine/). Guests are routed to
     a lighter/generic response profile; authenticated users get the full,
@@ -91,6 +91,7 @@ def call_ai_engine(*, prompt: str, image_path: str | None, is_authenticated: boo
         "image_path": image_path,
         "profile": "full" if is_authenticated else "guest_generic",
         "domain": "mental_health",
+        "user_display_name": display_name,
     }
     try:
         response = requests.post(
@@ -140,6 +141,7 @@ def handle_incoming_message(*, user, session_id, content, image=None):
             prompt=content,
             image_path=image.name if image else None,
             is_authenticated=getattr(user, "is_authenticated", False),
+            display_name=getattr(user, "username", None) if getattr(user, "is_authenticated", False) else None,
         )
         assistant_text = ai_response.get("text", "")
         model_version = ai_response.get("model_version", "")
